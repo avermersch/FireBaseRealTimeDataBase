@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.formation.firebaserealtimedatabase.model.Author;
 import com.example.formation.firebaserealtimedatabase.model.Book;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference bookReference;
     private List<Book> bookList;
     private ListView bookListView;
+    private BookArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         bookList = new ArrayList<>();
 
         bookListView = findViewById(R.id.bookListView);
+        adapter = new BookArrayAdapter(this, R.layout.book_list_item,bookList);
+        bookListView.setAdapter(adapter);
 
         //Récupération des données avec abonnement aux modifications ultérieures
         bookReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -56,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
                     //ajout du livre à la liste
                     bookList.add(book);
                 }
+
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -103,7 +109,16 @@ public class MainActivity extends AppCompatActivity {
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View view = context.getLayoutInflater().inflate(this.resource, parent, false);
+            View view = context.getLayoutInflater().inflate(
+                    this.resource, parent, false);
+
+            Book currentBook = bookList.get(position);
+            TextView textView = view.findViewById(R.id.bookListText);
+            textView.setText(
+                                    currentBook.getTitle()
+                                    + " par "
+                                    + currentBook.getAuthor().getName()
+            );
 
             return view;
         }
