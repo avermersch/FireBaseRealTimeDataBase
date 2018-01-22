@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference bookReference;
-    private List<Book> bookList;
+    private List<Book> bookList = new ArrayList<>();
     private ListView bookListView;
     private BookArrayAdapter adapter;
 
@@ -39,15 +39,13 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         bookReference = firebaseDatabase.getReference().child("Books");
-        //Instanciation de la liste
-        bookList = new ArrayList<>();
 
         bookListView = findViewById(R.id.bookListView);
-        adapter = new BookArrayAdapter(this, R.layout.book_list_item,bookList);
+        adapter = new BookArrayAdapter(this, R.layout.book_list_item, bookList);
         bookListView.setAdapter(adapter);
 
         //Récupération des données avec abonnement aux modifications ultérieures
-        bookReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        bookReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Réinitialisation de la liste
